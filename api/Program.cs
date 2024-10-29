@@ -19,7 +19,7 @@ builder.Services.AddTransient<DapperDBContext>();
 // Dependency injection of User Repository
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 // Dependency Injection of Password Hashing service
-builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

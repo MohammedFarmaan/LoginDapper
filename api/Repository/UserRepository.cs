@@ -11,10 +11,12 @@ namespace api.Repository
     public class UserRepository : IUserRepository
     {
         private readonly DapperDBContext _context;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public UserRepository(DapperDBContext dapperDBContext)
+        public UserRepository(DapperDBContext dapperDBContext, IPasswordHasher passwordHasher)
         {
             _context = dapperDBContext;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<string?> CreateUser(User user)
@@ -75,8 +77,8 @@ namespace api.Repository
             var user = await connection.QueryFirstOrDefaultAsync(getUserQuery, new { email });
             
             // Verifying password hash
-            var passwordHasher = new PasswordHasher();
-            var isPassordValid = passwordHasher.Verify(password, user.password);
+            // var passwordHasher = new PasswordHasher();
+            var isPassordValid = _passwordHasher.Verify(password, user.password);
 
             // var isValidUser = await connection.QueryFirstOrDefaultAsync(query, new { email, isPassordValid});
 
@@ -97,8 +99,8 @@ namespace api.Repository
             if(existingUser == null){
                 return null;
             }else{
-                var passwordHasher = new PasswordHasher();
-                var password = passwordHasher.Hash(user.Password);
+                // var passwordHasher = new PasswordHasher();
+                var password = _passwordHasher.Hash(user.Password);
                 var updatedUser = await connection.ExecuteAsync(query, new {id, user.Username, user.Email, password});
 
                 return "User updated successfully";
