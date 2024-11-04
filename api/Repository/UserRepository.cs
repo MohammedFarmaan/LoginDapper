@@ -21,11 +21,11 @@ namespace api.Repository
 
         public async Task<string?> CreateUser(User user)
         {
-            var query = "INSERT INTO users VALUES(@id, @username, @email, @password)";
-            var existUserQuery = "SELECT * FROM users WHERE id=@id";
+            var query = "INSERT INTO users VALUES(@username, @email, @password)";
+            var existUserQuery = "SELECT * FROM users WHERE email=@email";
             using var connection = _context.CreateConnection();   
 
-            var existingUser = await connection.QueryFirstOrDefaultAsync(existUserQuery, new {user.Id});
+            var existingUser = await connection.QueryFirstOrDefaultAsync(existUserQuery, new {user.Email});
             
             if(existingUser != null){
                 return null;
@@ -33,7 +33,7 @@ namespace api.Repository
             }else{
                 var passwordHasher = new PasswordHasher();
                 var password = passwordHasher.Hash(user.Password);
-                var newUser = await connection.ExecuteAsync(query, new {user.Id, user.Username, user.Email, password});
+                var newUser = await connection.ExecuteAsync(query, new {user.Username, user.Email, password});
 
                 return "User created successfully";
             }

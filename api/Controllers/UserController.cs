@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using api.Models.DTO;
 using api.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -125,23 +126,21 @@ namespace api.Controllers
     /// <summary>
     /// User Login using email and password
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="loginDto"></param>
     /// <returns></returns>
     /// <remarks>
     /// Sample request:
     ///
     ///     POST api/User/login
     ///     {
-    ///        "id": 0,
-    ///        "username": "string",
     ///        "email": "test@mail.com",
     ///        "password": "1234"
     ///     }
     /// 
     /// </remarks>
     [HttpPost("login")]
-    public async Task<IActionResult> LoginUser([FromBody] User user){
-        var existingUser = await _userRepository.LoginUser(user.Email, user.Password);
+    public async Task<IActionResult> LoginUser([FromBody] LoginDto loginDto){
+        var existingUser = await _userRepository.LoginUser(loginDto.Email, loginDto.Password);
 
         if(existingUser == true){
             return Ok("Login Successful");

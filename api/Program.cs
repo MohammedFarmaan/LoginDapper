@@ -1,6 +1,7 @@
 using api.Models;
 using api.Repository;
 using api.Services;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,10 @@ builder.Services.AddTransient<DapperDBContext>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 // Dependency Injection of Password Hashing service
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+
+// Enable CORS
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,5 +35,10 @@ if (app.Environment.IsDevelopment())
 }
 app.MapControllers();
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors(builder => 
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+);
 
 app.Run();
